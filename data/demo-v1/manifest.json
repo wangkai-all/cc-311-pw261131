@@ -1,0 +1,65 @@
+{
+  "synthetic": true,
+  "seed": 20260816,
+  "analysisStartDate": "2026-07-20",
+  "analysisEndDate": "2026-11-08",
+  "note": "Synthetic data for engineering demonstration only. Not real utility, customer, or settlement data.",
+  "files": [
+    {
+      "name": "sites.csv",
+      "kind": "sites",
+      "rows": 4,
+      "sha256": "3ac9fb9aeaf87ccf1ca2640f7c8bde2f1e99a876790b71695bfbc9b13608ccad"
+    },
+    {
+      "name": "stations.csv",
+      "kind": "stations",
+      "rows": 4,
+      "sha256": "82f2f74bca58329e70cc53b444a69e2a550ed1443735c1f42f02fbefd7a88558"
+    },
+    {
+      "name": "interval_reads.csv",
+      "kind": "reads",
+      "rows": 42956,
+      "sha256": "cca9260b9ecd7b45ec7cafc5f7612d88bbf9794d24ec05e79b39c3047a665fa5"
+    },
+    {
+      "name": "weather_hourly.csv",
+      "kind": "weather",
+      "rows": 10674,
+      "sha256": "f7291ff92c32f500d2040a75c86979794dfae1df2f51a7eff40fa49ee284ca3b"
+    },
+    {
+      "name": "production_log.csv",
+      "kind": "production",
+      "rows": 8,
+      "sha256": "5e699d941c83d6066fe7e9d7b417b7c35fb5dc1f1e43e8858f256d8d09129c24"
+    },
+    {
+      "name": "meter_registry.csv",
+      "kind": "meters",
+      "rows": 6,
+      "sha256": "eb10c310a86efe4b9f3ad6068eec90df917228fa0ae86141e6f3632d15b2669a"
+    },
+    {
+      "name": "dr_events.csv",
+      "kind": "events",
+      "rows": 10,
+      "sha256": "bd6439d49803a544c1e8ae15b9598d56faa48d62fd1ac9cba71d46abef277fdd"
+    },
+    {
+      "name": "holidays.csv",
+      "kind": "holidays",
+      "rows": 4,
+      "sha256": "0d7ecd184adb688610dd08075607e426b8244d4a23bbe172a4a977b0bdf14e13"
+    },
+    {
+      "name": "corrections_v2.csv",
+      "kind": "corrections",
+      "rows": 5,
+      "sha256": "329f8b6b69569b6a39476bea6a3753357bcc269c4b63d653defaf90cd85c2a2c"
+    }
+  ],
+  "label": "Synthetic demo bundle",
+  "generatedBy": "scripts/generate-demo.ts"
+}

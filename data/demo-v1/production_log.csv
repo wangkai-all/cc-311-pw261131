@@ -1,0 +1,9 @@
+site_id,start_utc,end_utc,status,verified,expected_drop_pct,source,note
+SITE-RIV,2026-08-05T10:00:00Z,2026-08-09T23:00:00Z,planned_maintenance,true,62,CMMS work order WO-4482,Annual boiler and ammonia loop maintenance; both shifts down.
+SITE-RIV,2026-08-20T15:00:00Z,2026-08-20T21:00:00Z,non_routine,false,,Night-shift supervisor note (unconfirmed),Possible packaging line jam. Unverified; does not by itself drive exclusion.
+SITE-RIV,2026-08-27T11:00:00Z,2026-08-27T17:00:00Z,non_routine,true,30,Shift report signed by plant engineer,Line changeover ran long; verified reduction before the dispatch window.
+SITE-ARD,2026-08-20T10:00:00Z,2026-08-22T02:00:00Z,unplanned_shutdown,true,88,BMS alarm log + shift report,Compressor bank failure; plant offline through the response window.
+SITE-ARD,2026-08-26T11:00:00Z,2026-08-27T23:00:00Z,reduced,true,35,Production plan revision,Single-line operation after an order cancellation.
+SITE-GLN,2026-08-25T14:00:00Z,2026-08-26T02:00:00Z,unplanned_shutdown,true,80,Utility outage ticket + shift log,Feeder breaker trip on the press line; plant restarted at 20:00.
+SITE-GLN,2026-08-12T06:00:00Z,2026-08-13T06:00:00Z,planned_maintenance,true,45,CMMS work order WO-4510,"Chiller maintenance, half plant load."
+SITE-MTN,2026-08-19T07:00:00Z,2026-08-19T19:00:00Z,reduced,true,28,Labor schedule,"Partial shift, fewer forklifts."

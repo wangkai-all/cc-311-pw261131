@@ -1,0 +1,7 @@
+meter_id,site_id,serial,multiplier,installed_utc,removed_utc,note
+M-RIV-1,SITE-RIV,SN-884120,1,2025-01-01T06:00:00Z,2026-08-11T15:05:00Z,Original meter; removed during a service upgrade.
+M-RIV-2,SITE-RIV,SN-884577,1,2026-08-11T14:20:00Z,,Replacement meter installed during the upgrade; 45-minute overlap with the old meter.
+M-ARD-1,SITE-ARD,SN-771300,1,2025-01-01T05:00:00Z,,Primary utility meter.
+M-GLN-1,SITE-GLN,SN-660941,1,2025-01-01T07:00:00Z,2026-09-03T14:00:00Z,Primary utility meter; pulled for a CT cabinet service.
+M-GLN-2,SITE-GLN,SN-660942,1,2026-09-03T14:30:00Z,,Replacement meter after the CT cabinet service; 30-minute gap with no active meter.
+M-MTN-1,SITE-MTN,SN-552018,1,2025-01-01T07:00:00Z,,Primary utility meter.

@@ -1,0 +1,34 @@
+{
+  "latest": "ds-2026.09.01-b",
+  "order": [
+    "ds-2026.08.10-a",
+    "ds-2026.09.01-b"
+  ],
+  "diff": {
+    "fromVersionId": "ds-2026.08.10-a",
+    "addedReads": 3,
+    "correctedReads": 0,
+    "productionChanges": [
+      {
+        "siteId": "SITE-RIV",
+        "startUtc": 1787238000000,
+        "field": "verified",
+        "oldValue": "false",
+        "newValue": "true"
+      },
+      {
+        "siteId": "SITE-RIV",
+        "startUtc": 1787238000000,
+        "field": "expected_drop_pct",
+        "oldValue": "",
+        "newValue": "18"
+      }
+    ],
+    "notes": [
+      "3 interval readings added",
+      "0 interval readings corrected",
+      "2 production record fields changed"
+    ]
+  },
+  "builtAt": "2026-09-01T17:40:00Z"
+}

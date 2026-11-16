@@ -1,0 +1,5 @@
+station_id,name,city,note
+WX-CHI,Chicago O’Hare,Chicago,Regional airport station; hourly dry-bulb and humidity. Complete record.
+WX-NYC,New York LaGuardia,New York,Coastal station; hourly observations interrupted 2026-08-23 through 2026-08-25.
+WX-DEN,Denver International,Denver,High-altitude station; wide diurnal swing.
+WX-PHX,Phoenix Sky Harbor,Phoenix,Desert station; no daylight-saving transitions.

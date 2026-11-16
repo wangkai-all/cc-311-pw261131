@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Demand Response Analysis — synthetic demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6feb'/%3E%3Cpath d='M9 21l5-11 4 7 3-4' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to analysis</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="7" fill="currentColor" />
+          <path d="M9 21l5-11 4 7 3-4" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>
+          <h1>Demand Response Analysis</h1>
+          <p class="sub">Interval baselines, attribution and revision comparison</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <label class="inline-field">
+          <span>Dataset version</span>
+          <select id="version-select" aria-label="Dataset version"></select>
+        </label>
+        <span class="badge warn" title="No real grid control, dispatch or settlement is performed.">Synthetic demo · not a settlement</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label="Analysis setup">
+        <section class="panel">
+          <h2>Analysis</h2>
+          <form id="run-form" class="stack">
+            <label class="field">
+              <span>Site</span>
+              <select id="site-select" required></select>
+            </label>
+            <label class="field">
+              <span>Event</span>
+              <select id="event-select" required></select>
+            </label>
+            <label class="field">
+              <span>Event revision</span>
+              <select id="revision-select"></select>
+              <small id="revision-hint" class="hint"></small>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="validation-mode" />
+              <span>Validation mode (train before a chosen day)</span>
+            </label>
+            <label class="field" id="validation-field" hidden>
+              <span>Validation date</span>
+              <input type="date" id="validation-date" />
+            </label>
+            <button type="submit" class="primary" id="run-btn">Run analysis</button>
+            <p class="hint" id="run-hint">Runs locally on the synthetic dataset already loaded on the server.</p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Exclusions</h2>
+            <button type="button" class="linkish" id="reset-exclusions">Reset</button>
+          </div>
+          <form id="exclusions-form" class="stack tight">
+            <label class="field">
+              <span>Rule selection policy</span>
+              <select id="ex-autoPolicy">
+                <option value="min_uncertainty">Pick lowest uncertainty</option>
+                <option value="prefer_matched">Prefer matched days</option>
+                <option value="prefer_weather">Prefer weather regression</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Force baseline rule</span>
+              <select id="ex-methodOverride">
+                <option value="">Automatic</option>
+                <option value="matched_10of10_weather">Matched 10-of-10 + weather</option>
+                <option value="matched_4of5_weather">Matched 4-of-5 + weather</option>
+                <option value="weather_regression">Weather regression</option>
+              </select>
+            </label>
+            <fieldset class="fieldset">
+              <legend>Production &amp; calendar</legend>
+              <label class="check"><input type="checkbox" id="ex-excludeUnverifiedProduction" /><span>Exclude <b>unverified</b> production anomalies</span></label>
+              <label class="check"><input type="checkbox" id="ex-excludeHolidays" /><span>Exclude holidays</span></label>
+              <label class="check"><input type="checkbox" id="ex-excludeEventDays" /><span>Exclude other event days</span></label>
+              <div class="field">
+                <span>Excluded production statuses</span>
+                <div class="chips" id="ex-production-statuses"></div>
+              </div>
+            </fieldset>
+            <fieldset class="fieldset">
+              <legend>Reads &amp; meters</legend>
+              <label class="check"><input type="checkbox" id="ex-treatEstimatedAsMissing" /><span>Treat estimated reads as missing</span></label>
+              <label class="check"><input type="checkbox" id="ex-excludeMeterExchangeDays" /><span>Exclude meter-exchange days</span></label>
+              <label class="check"><input type="checkbox" id="ex-excludeDstTransitionDays" /><span>Exclude DST-transition days</span></label>
+            </fieldset>
+            <fieldset class="fieldset">
+              <legend>Coverage thresholds</legend>
+              <label class="range">
+                <span>Min attributable coverage <output id="out-minActualCoverage"></output></span>
+                <input type="range" id="ex-minActualCoverage" min="0.5" max="1" step="0.01" />
+              </label>
+              <label class="range">
+                <span>Min day coverage <output id="out-minDayCoverage"></output></span>
+                <input type="range" id="ex-minDayCoverage" min="0.5" max="1" step="0.01" />
+              </label>
+            </fieldset>
+            <fieldset class="fieldset">
+              <legend>Baseline sample</legend>
+              <label class="range">
+                <span>Lookback days <output id="out-lookbackDays"></output></span>
+                <input type="range" id="ex-lookbackDays" min="14" max="90" step="1" />
+              </label>
+              <label class="range">
+                <span>Weather correction <output id="out-weatherCorrection"></output></span>
+                <input type="range" id="ex-weatherCorrection" min="0" max="1" step="1" />
+              </label>
+            </fieldset>
+          </form>
+          <p class="hint">Exclusions are applied <em>before</em> a rule selects its sample, so every rule in the comparison sees the same business filters.</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Tasks</h2>
+            <button type="button" class="linkish" id="refresh-tasks">Refresh</button>
+          </div>
+          <ul class="task-list" id="task-list"></ul>
+        </section>
+      </aside>
+
+      <main id="main" class="main" tabindex="-1">
+        <div id="flash" class="flash" role="status" aria-live="polite" hidden></div>
+
+        <section id="empty-state" class="panel empty">
+          <h2>No report selected</h2>
+          <p>Choose a site and event, then <strong>Run analysis</strong>. The engine aligns 15-minute intervals in the site's own timezone, removes non-response effects, and compares three baseline rules.</p>
+          <ul class="plain">
+            <li>Missing reads are never zero-filled; they are excluded and reported.</li>
+            <li>Training data always ends before the response window (leakage guard).</li>
+            <li>Every report pins its dataset version, revision, exclusion hash and rule.</li>
+          </ul>
+        </section>
+
+        <div id="report-view" hidden>
+          <section class="panel report-head">
+            <div class="report-title">
+              <div>
+                <p class="eyebrow" id="rep-event"></p>
+                <h2 id="rep-title">—</h2>
+                <p class="meta" id="rep-meta"></p>
+              </div>
+              <div class="head-actions">
+                <span class="status-pill" id="rep-status">—</span>
+                <a class="button ghost" id="rep-csv" href="#" download>Download CSV</a>
+              </div>
+            </div>
+            <div class="kpis" id="kpis"></div>
+            <div class="notice-stack" id="rep-warnings"></div>
+            <p class="basis" id="rep-basis"></p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head wrap">
+              <div>
+                <h2>Window profile</h2>
+                <p class="hint" id="chart-hint">Hover or focus the chart to inspect an interval. Click a point to open it in the drill-down table.</p>
+              </div>
+              <div class="toggles" role="group" aria-label="Chart layers">
+                <label class="check inline"><input type="checkbox" id="tgl-actual" checked /><span>Actual</span></label>
+                <label class="check inline"><input type="checkbox" id="tgl-baseline" checked /><span>Baseline</span></label>
+                <label class="check inline"><input type="checkbox" id="tgl-ci" checked /><span>90% CI</span></label>
+                <label class="check inline"><input type="checkbox" id="tgl-excluded" checked /><span>Excluded</span></label>
+                <label class="check inline"><input type="checkbox" id="tgl-temp" /><span>Temperature</span></label>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div id="chart" class="chart" role="img" aria-labelledby="chart-hint"></div>
+              <div id="chart-tooltip" class="tooltip" hidden></div>
+            </div>
+            <div class="legend" id="legend"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Rule comparison</h2>
+                <p class="hint">All three rules are evaluated on the same attributable intervals. A rule that fails an applicability check is shown but cannot be selected.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="grid" id="method-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Rule</th>
+                    <th scope="col">Sample</th>
+                    <th scope="col" class="num">Baseline kWh</th>
+                    <th scope="col" class="num">Savings kWh</th>
+                    <th scope="col" class="num">90% CI</th>
+                    <th scope="col" class="num">Coverage</th>
+                    <th scope="col" class="num">± vs selected</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div id="method-detail" class="method-detail"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Attribution &amp; exclusions</h2>
+                <p class="hint" id="attr-hint">Reasons window intervals were removed before savings were computed.</p>
+              </div>
+            </div>
+            <div class="attr-bars" id="attr-bars"></div>
+            <div class="table-wrap">
+              <table class="grid compact" id="exclusion-table">
+                <thead>
+                  <tr><th scope="col">Reason</th><th scope="col" class="num">Intervals</th><th scope="col" class="num">kWh</th><th scope="col">Where</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head wrap">
+              <div>
+                <h2>Interval drill-down</h2>
+                <p class="hint">Only attributable intervals with both a baseline and an actual read enter the savings total.</p>
+              </div>
+              <div class="filter-row">
+                <label class="field inline">
+                  <span>Show</span>
+                  <select id="interval-filter">
+                    <option value="all">All window intervals</option>
+                    <option value="attributable">Attributable only</option>
+                    <option value="excluded">Excluded only</option>
+                    <option value="missing-baseline">Missing baseline</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="table-wrap tall">
+              <table class="grid compact" id="interval-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Local time</th>
+                    <th scope="col" class="num">Temp °F</th>
+                    <th scope="col" class="num">Baseline kWh</th>
+                    <th scope="col" class="num">90% CI</th>
+                    <th scope="col" class="num">Actual kWh</th>
+                    <th scope="col" class="num">Δ kWh</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Notes</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head wrap">
+              <div>
+                <h2>Compare revisions</h2>
+                <p class="hint">Comparison refuses to subtract figures that do not share a basis; mismatches and a common-window delta are shown instead.</p>
+              </div>
+            </div>
+            <div class="compare-controls">
+              <label class="field inline"><span>Base report</span><select id="cmp-a"></select></label>
+              <label class="field inline"><span>Compare with</span><select id="cmp-b"></select></label>
+              <button type="button" class="button" id="cmp-run">Compare</button>
+            </div>
+            <div id="compare-out" class="compare-out"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head wrap">
+              <div>
+                <h2>Data health</h2>
+                <p class="hint">Quarantined rows and version-to-version changes. Bad rows are never silently dropped or zero-filled.</p>
+              </div>
+              <label class="field inline"><span>Version</span><select id="dq-version"></select></label>
+            </div>
+            <div id="dq-summary" class="dq-summary"></div>
+            <div class="table-wrap"><table class="grid compact" id="quarantine-table"><thead><tr><th scope="col">Row</th><th scope="col">Code</th><th scope="col">Detail</th></tr></thead><tbody></tbody></table></div>
+            <div id="version-diff" class="version-diff"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <p>Synthetic data generated for demonstration. No real customer, meter, grid-control or settlement use. Baseline figures are estimates with stated uncertainty.</p>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+kind,site_id,start_utc,read_ts_utc,kwh,quality,field,new_value,note
+read,SITE-RIV,,2026-08-27T22:00:00Z,96.1,estimated,,,"Late logger backfill, flagged estimated."
+read,SITE-RIV,,2026-08-27T22:15:00Z,98.7,estimated,,,"Late logger backfill, flagged estimated."
+read,SITE-RIV,,2026-08-27T22:30:00Z,101.3,estimated,,,"Late logger backfill, flagged estimated."
+production,SITE-RIV,2026-08-20T15:00:00Z,,,,verified,true,Aug 20 shift note countersigned; now a verified anomaly.
+production,SITE-RIV,2026-08-20T15:00:00Z,,,,expected_drop_pct,18,Countersigned estimate of 18% load loss for the line jam.

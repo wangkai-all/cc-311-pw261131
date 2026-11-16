@@ -1,0 +1,5 @@
+site_id,name,timezone,segment,floor_area_sqft,latitude,longitude,weather_station_id,note
+SITE-RIV,Riverside Foods Plant,America/Chicago,Food & Beverage,184000,41.87,-87.65,WX-CHI,"Two-shift refrigerated plant; one utility interval meter, 15-minute reads."
+SITE-ARD,Arden Cold Storage,America/New_York,Cold Storage,132000,40.28,-74.86,WX-NYC,Cold storage and blast freezing; six compressors. Meter reads have an estimated-read period.
+SITE-GLN,Glenview Plastics,America/Denver,Plastics,98000,39.74,-105,WX-DEN,"Injection molding; two presses, weekend idle."
+SITE-MTN,Mountain View Logistics,America/Phoenix,Logistics,260000,33.45,-112.07,WX-PHX,Distribution center; no daylight-saving transitions in this zone.
